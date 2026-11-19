@@ -1,0 +1,2 @@
+request,load_seconds,total_seconds,remaining_seconds,scope
+cedar_initial_success,9.29,11.51,2.22,one PowerShell request on Windows
