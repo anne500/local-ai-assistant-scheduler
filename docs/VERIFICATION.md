@@ -132,6 +132,33 @@ The new workers use the tutorial's GOOGL chart endpoint and a public Hugging Fac
 - ✅ Live Yahoo chart retrieval parsed successfully into quote evidence.
 - ✅ Live Hugging Face RSS retrieval parsed successfully and selected up to three entries.
 - ✅ Both reports assembled from live retrieval with model responses replaced by test stubs.
-- ⏳ Local Qwen execution through the new workers on Windows awaits verification. No generated stock or news summary has yet been reviewed.
+- ✅ Subsequent Windows execution and source review are recorded in the November 19 four-worker section below. That review identified empty news excerpts and led to the headline-only correction.
 
 Run all workers from the project root and review the resulting stock and news reports. The news digest uses one publisher's feed excerpts. Python appends publication dates and URLs. Quote changes are computed in Python with Decimal arithmetic against chartPreviousClose. Quote timestamps are retained so the report can be interpreted in context.
+
+<a id="four-worker-windows-run"></a>
+
+## ✅ November 19 four-worker Windows run
+
+The supplied Windows transcript records commit `0df7ec9`, ten offline tests passing in 0.005 seconds, and all four workers producing reports with runner exit code `0`.
+
+| Worker | Report |
+| --- | --- |
+| 📰 AI news | `ai-news-2026-11-19_20-57-42_248967.md` |
+| 📄 Cedar | `cedar-ci-2026-11-19_20-57-44_252282.md` |
+| 📈 GOOGL | `googl-stock-2026-11-19_20-57-52_364190.md` |
+| 🌤️ Weather | `weather-brief-2026-11-19_20-58-02_171429.md` |
+
+### 📈 Stock source comparison
+
+The supplied stock sentence stated 272.66 USD and a 3.46% decrease relative to 282.44. Saved JSON records change `-9.78`, percent change `-3.46`, direction `down`, and quote time `2026-11-19T21:00:00+00:00`.
+
+Python arithmetic confirms `272.66 - 282.44 = -9.78` and `(-9.78 / 282.44) * 100` rounds to `-3.46` percent. The reviewed sentence matches the saved values. The source market-state field was unavailable.
+
+### 📰 News evidence boundary and correction
+
+All three saved news entries had empty `excerpt` values. The output restated headlines, and one sentence inferred an IBM Research attribution from the source context. Article-content support was unavailable in the supplied evidence.
+
+The corrected worker keeps the original feed headline and emits the exact message **Headline only. The feed supplied no article excerpt.** It sets `evidence_scope` to `headline_only` and skips the model call for that entry. Entries with excerpts use `feed_excerpt`; their prompt requests attribution to the post and forbids adding authors or affiliations.
+
+Twelve offline checks passed in the authoring environment after the correction. New checks cover zero model calls for headline-only input and the observed stock arithmetic. The updated headline-only path awaits Windows execution verification. Automatic scheduling evidence remains the earlier Cedar-only run.

@@ -64,10 +64,31 @@ class WorkerChecks(unittest.TestCase):
     def test_news_report_preserves_sources(self, summary, fetch):
         fetch.return_value.__enter__.return_value.read.return_value = RSS
         report = ai_news.run()
-        self.assertEqual(summary.call_count, 3)
+        self.assertEqual(summary.call_count, 1)
         self.assertIn("Source: https://huggingface.co/blog/new", report)
         self.assertIn("## Source evidence", report)
         self.assertIn("one publisher", report)
+
+
+    @patch("agents.ai_news.urlopen")
+    @patch("agents.ai_news.summarize")
+    def test_headline_only_entries_skip_model(self, summary, fetch):
+        fetch.return_value.__enter__.return_value.read.return_value = b"""<rss><channel>
+        <item><title>A model efficiency claim</title>
+        <link>https://huggingface.co/blog/example</link></item>
+        </channel></rss>"""
+        report = ai_news.run()
+        summary.assert_not_called()
+        self.assertIn("## A model efficiency claim", report)
+        self.assertIn("Headline only. The feed supplied no article excerpt.", report)
+        self.assertIn('"evidence_scope": "headline_only"', report)
+        self.assertIn("Source: https://huggingface.co/blog/example", report)
+
+    def test_observed_quote_arithmetic(self):
+        result = googl_stock.quote_evidence(chart("272.66", "282.44"))
+        self.assertEqual(result["change"], "-9.78")
+        self.assertEqual(result["percent_change"], "-3.46")
+        self.assertEqual(result["direction"], "down")
 
     @patch("agents.googl_stock.urlopen")
     @patch("agents.googl_stock.summarize", return_value="GOOGL retrieved quote.")

@@ -59,12 +59,18 @@ def run() -> str:
     retrieved_at = datetime.now(timezone.utc).isoformat()
     sections = []
     for entry in entries:
-        summary = summarize(
-            "Write one short sentence summarizing the supplied RSS title and excerpt. "
-            "Use only those facts. If the excerpt is empty, paraphrase only the title. "
-            "Do not add links, publication dates, rankings or claims of independent verification.",
-            entry,
-        )
+        if entry["excerpt"]:
+            entry["evidence_scope"] = "feed_excerpt"
+            summary = summarize(
+                "Write one short sentence summarizing the supplied RSS excerpt. "
+                "Attribute claims to the post. Use only supplied facts. "
+                "Do not add links, publication dates, authors, affiliations, "
+                "rankings or claims of independent verification.",
+                entry,
+            )
+        else:
+            entry["evidence_scope"] = "headline_only"
+            summary = "Headline only. The feed supplied no article excerpt."
         sections.append(
             f"## {entry['title']}\n\n{summary}\n\n"
             f"Published (UTC): {entry['published_utc']}\n\nSource: {entry['url']}\n"
@@ -72,7 +78,7 @@ def run() -> str:
     return (
         "# AI News Digest: Hugging Face Blog\n\n"
         "Scope: up to three recent entries from one publisher's RSS feed. "
-        "Summaries use feed excerpts.\n\n"
+        "Each entry identifies whether a feed excerpt was available.\n\n"
         f"Feed: {FEED_URL}\n\nRetrieved at (UTC): {retrieved_at}\n\n"
         + "\n".join(sections)
         + f"\n## Source evidence\n\n```json\n{json.dumps(entries, indent=2)}\n```\n"

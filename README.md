@@ -4,7 +4,7 @@
 
 **🟦 Learn AI · 🟩 Portfolio evidence · 🟪 PhD research**
 
-Run local AI workers with Python, Ollama, and Windows Task Scheduler. Four workers generate briefs for AI news, synthetic Cedar CI evidence, GOOGL quotes, and New York weather. Cedar and weather have verified Windows model runs; stock and RSS news are implemented with offline checks and live retrieval checks, awaiting Windows model verification.
+Run local AI workers with Python, Ollama, and Windows Task Scheduler. Four workers generate briefs for AI news, synthetic Cedar CI evidence, GOOGL quotes, and New York weather. All four workers completed a Windows run with exit code 0. The stock sentence matched its saved quote values. The supplied news feed had empty excerpts; a subsequent correction labels headline-only entries and skips model generation for them.
 
 ## 🧭 Explore the project
 
@@ -34,12 +34,13 @@ This repository implements **AI News**, **Cedar CI**, **GOOGL Stock**, and **Wea
 | --- | --- | --- | --- |
 | 🟦 Tutorial baseline | 📘 Runner pattern | Worker discovery, local inference, Markdown output, and OS scheduling, based on Darsh Shah's freeCodeCamp tutorial | [Original tutorial](https://www.freecodecamp.org/news/how-to-build-and-schedule-local-ai-assistants-for-daily-tasks/) |
 | 🟦 Tutorial baseline | 🌤️ Weather worker | Implements the tutorial weather example using wttr.in and local Ollama | [Worker](agents/weather_brief.py) · [Weather verification](docs/VERIFICATION.md#weather-worker) |
-| 🟦 Tutorial baseline | 📈 Stock worker | Retrieves GOOGL data and computes quote changes in Python; Windows model run pending | [Worker](agents/googl_stock.py) |
+| 🟦 Tutorial baseline | 📈 Stock worker | Retrieves GOOGL data and computes quote changes in Python; Windows model run and one source comparison verified | [Worker](agents/googl_stock.py) |
 | 🔧 Adaptation | 📰 RSS news | Up to three Hugging Face feed entries replace hosted web search; Python retains links and publication dates | [Worker](agents/ai_news.py) |
 | 🔧 Adaptation | 📄 Cedar evidence | A synthetic CI fixture and standard-library HTTP client replace the tutorial's external-data examples | [Worker](agents/cedar_ci.py) · [Fixture](fixtures/cedar-ci.txt) |
 | 🔧 Adaptation | 🧠 Bounded generation | Thinking disabled, temperature 0, 64 tokens for Cedar; 128 for weather, stock, and each news entry, 180-second model HTTP timeout | [Worker settings](agents/cedar_ci.py) |
 | ➕ Implemented extension | 🛡️ Observable failure handling | File logging and a failure exit code, with continuation after a worker fails | [Runner](scheduler.py) · [Observed failure and recovery](docs/VERIFICATION.md#failure-and-recovery) |
 | ➕ Implemented extension | 🌤️ Weather evidence | Saved JSON, source URL, and UTC retrieval time; distinct bullet responsibilities reviewed on one sample | [Weather verification](docs/VERIFICATION.md#weather-worker) |
+| ➕ Implemented extension | 📰 Headline-only boundary | Empty excerpts retain feed headlines and skip model generation; regression tested | [Verification record](docs/VERIFICATION.md#four-worker-windows-run) |
 | ➕ Implemented extension | 📂 Absolute project paths | Paths resolve from Python source locations for scheduled execution | [Runner](scheduler.py) · [Windows launch evidence](docs/VERIFICATION.md#windows-launch) |
 | 🧭 Planned extension | 🔎 Real CI evaluation | Representative build evidence and broader quality assessment | [Roadmap](#roadmap) |
 
@@ -59,7 +60,8 @@ This repository implements **AI News**, **Cedar CI**, **GOOGL Stock**, and **Wea
 | 🗓️ Daily trigger | ✅ Configured and exercised | November 19 at 08:00:01 Windows local time |
 | 🔍 Automatic Cedar execution | ✅ Verified | Task result `0` and report saved at 08:00:13 on November 19 |
 | 🌤️ Automatic weather execution | ⏳ Pending verification | Weather was added after the verified morning run |
-| 📈 Stock and 📰 RSS news | 🟨 Implemented; Windows run pending | Ten offline checks and live retrieval/report assembly checks passed |
+| 📈 Stock | ✅ Windows run and sample verified | Quote 272.66 USD; previous close 282.44; change -9.78; percent -3.46 |
+| 📰 RSS news | 🟨 Windows execution verified; headline correction added | Empty excerpts now receive an explicit headline-only label and skip model generation |
 | 🔎 Real CI evaluation | 🧭 Future work | Representative build evidence and quality assessment |
 
 <a id="architecture"></a>
@@ -68,7 +70,7 @@ This repository implements **AI News**, **Cedar CI**, **GOOGL Stock**, and **Wea
 
 ![Four workers in discovery order with source types, local Ollama, and report storage](assets/workflow.svg)
 
-The runner imports each non-private Python module in `agents/`, calls `run()`, and writes its returned text to `outputs/`. Cedar reads the fixture and asks local Ollama for one sentence. Weather retrieves New York conditions and requests two bullets covering distinct fields. Workers run sequentially in filename order: AI news, Cedar, GOOGL stock, then weather. News summarizes up to three feed excerpts. Stock computes change and percentage change in Python before asking for one descriptive sentence. The runner catches a worker exception, logs it, and proceeds to the next worker.
+The runner imports each non-private Python module in `agents/`, calls `run()`, and writes its returned text to `outputs/`. Cedar reads the fixture and asks local Ollama for one sentence. Weather retrieves New York conditions and requests two bullets covering distinct fields. Workers run sequentially in filename order: AI news, Cedar, GOOGL stock, then weather. News summarizes available feed excerpts. Entries with empty excerpts retain their original headlines and receive an explicit headline-only label without a model call. Stock computes change and percentage change in Python before asking for one descriptive sentence. The runner catches a worker exception, logs it, and proceeds to the next worker.
 
 | Color and role | Components |
 | --- | --- |
@@ -77,7 +79,7 @@ The runner imports each non-private Python module in `agents/`, calls `run()`, a
 | 🟦 Storage | Fixture, generated Markdown, and log file |
 | 🟢 Observable outcome | Report creation and successful exit |
 | 🔴 Failure | Logged worker exception and nonzero exit |
-| 🟡 Pending state | Automatic weather execution awaiting evidence |
+| 🟡 Pending state | Automatic weather execution and updated headline-mode Windows run awaiting evidence |
 
 ## ✨ Features
 
@@ -124,7 +126,7 @@ To run the Cedar worker directly:
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-Run `scheduler.py` to execute all four workers. News may make up to three sequential model calls. Review the stock and news reports against their saved source evidence before marking Windows model execution verified.
+Run `scheduler.py` to execute all four workers. News may make up to three sequential model calls, one for each entry with an excerpt. Empty-excerpt entries skip generation. Review generated summaries against the saved evidence.
 
 ## ⚙️ Configuration
 
@@ -176,9 +178,11 @@ This historical sample was retrieved at **2026-11-20T00:29:49.894568+00:00**, du
 | ✅ Python worker | Saved Markdown with summary and source evidence |
 | ✅ Runner | Discovered Cedar and weather, saved both reports, and returned `0` |
 | ✅ Weather sample | Two distinct bullets matched all five weather values in the reviewed source |
-| ✅ New-worker offline checks | 10 tests passed in the authoring environment |
+| ✅ New-worker offline checks | Initial 10 tests passed on Windows; updated 12 tests passed in the authoring environment |
 | ✅ Stock/RSS retrieval | Live endpoints parsed; report assembly checked with model responses stubbed |
-| ⏳ Stock/RSS Windows model execution | Awaiting user run and source comparison |
+| ✅ Four-worker Windows execution | All four reports saved; exit code 0 on November 19 |
+| ✅ Stock sample | Summary matched the supplied values and Python-computed -3.46% change |
+| 🟨 Headline-only correction | Empty news excerpts now skip generation; updated Windows run awaits verification |
 | ✅ Windows on-demand launch | Saved a fresh report and returned task result `0` |
 | ✅ Failure isolation | Temporary worker raised an error; Cedar completed; runner returned `1` |
 | ✅ Recovery | Later normal run saved a report and returned `0` |
@@ -249,8 +253,9 @@ Reports use `outputs/<worker-name>-<timestamp>.md`, with worker names `ai-news`,
 - 🧠 Generated output receives empty/truncation checks. Factual support and bullet separation were manually reviewed on supplied examples. The code does not automatically check each fact or detect duplicate bullets.
 - 🧪 The recorded runs establish local execution and failure handling. Broader accuracy and performance evaluation remains future work.
 - 🗓️ One automatic Cedar run is verified. Weather was added later; automatic weather execution and repeated daily reliability await evidence.
-- 📈 Stock and RSS news implementations await end-to-end Windows model verification. External services can return errors or rate limits.
-- 📰 The news digest covers one publisher's feed excerpts. Publication dates and source links are retained; broader news coverage and freshness guarantees require further evaluation.
+- 📈 One stock summary matched its saved values. External services can return errors or rate limits.
+- 📰 The initial news run supplied headlines with empty excerpts. The headline-only correction is covered by offline regression tests; an updated Windows run awaits verification.
+- 📰 The news digest covers one publisher's feed entries. Entries without excerpts are explicitly labeled headline-only. Publication dates and source links are retained; broader news coverage and freshness guarantees require further evaluation.
 - 🧠 Generated stock and news statements require source comparison. Quote calculations and source-link assembly are performed in Python.
 
 <a id="research"></a>
