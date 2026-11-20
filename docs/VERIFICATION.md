@@ -96,11 +96,26 @@ The reviewed sample matched each supplied field. This was a manual comparison wi
 
 The worker checks empty and truncated output. Factual support and bullet separation are prompt instructions with manual sample review. The missing observation timestamp prevents a freshness claim based on retrieval time alone.
 
-## 🗓️ Daily trigger
+<a id="automatic-daily-run"></a>
 
-The daily 08:00 registration was supplied with missed-run catch-up, `IgnoreNew` for overlapping task invocations, and battery-operation settings. The last reported `NextRunTime` was **November 19, 2026 at 08:00 Windows local time**.
+## 🗓️ Automatic daily Cedar execution
 
-**⏳ Automatic daily execution remains unverified.** Inspect a subsequent automatic run's `LastRunTime`, result code, and fresh report together before marking it verified.
+The daily 08:00 task registration includes missed-run catch-up, `IgnoreNew` for overlapping task invocations, and battery-operation settings.
+
+The supplied Task Scheduler status and matching runner log establish one automatic Cedar run on November 19, 2026.
+
+| Observation | Supplied evidence |
+| --- | --- |
+| 🕰️ Time of status check | November 19, 2026 at 17:47:49 Windows local time |
+| 🗓️ LastRunTime | November 19, 2026 at 08:00:01 |
+| 🟢 LastTaskResult | `0` |
+| 📝 Cedar report | `cedar-ci-2026-11-19_08-00-13_632505.md` |
+| 📋 Saved-report log entry | `2026-11-19 08:00:13,663 INFO Report saved:` followed by the report path |
+| ➡️ NextRunTime | November 20, 2026 at 08:00:00 |
+
+**✅ Automatic Cedar execution is verified from the matching task status and saved-report log entry.** The report contents from this particular run were not supplied for separate factual review.
+
+**⏳ Automatic weather execution awaits verification.** The weather worker was added in the afternoon, after the verified morning invocation. Its manual two-worker runs are recorded above. Further daily runs would establish repeated operation.
 
 ## 🔬 Evidence boundaries
 

@@ -45,7 +45,7 @@ This repository implements two permanent workers: **Cedar CI** reads a synthetic
 
 ## 🧭 Implementation roadmap
 
-![Implementation roadmap with verified, configured, pending, and future stages](assets/roadmap.svg)
+![Implementation roadmap with verified execution and future stages](assets/roadmap.svg)
 
 | Stage | Status | Evidence or next action |
 | --- | --- | --- |
@@ -54,8 +54,9 @@ This repository implements two permanent workers: **Cedar CI** reads a synthetic
 | 🌤️ Weather summary | ✅ One sample reviewed | Clear, 54°F, feels like 51°F, humidity 55%, wind 4 mph |
 | 🪟 Windows task launch | ✅ Verified on demand | Fresh report and `LastTaskResult = 0` |
 | 🛡️ Failure and recovery | ✅ Verified | Controlled failure returns `1`; later normal run returns `0` |
-| 🗓️ Daily trigger | 🟨 Configured | Daily at 08:00 Windows local time |
-| 🔍 Automatic daily execution | ⏳ Pending verification | Inspect a subsequent automatic run and its report |
+| 🗓️ Daily trigger | ✅ Configured and exercised | November 19 at 08:00:01 Windows local time |
+| 🔍 Automatic Cedar execution | ✅ Verified | Task result `0` and report saved at 08:00:13 on November 19 |
+| 🌤️ Automatic weather execution | ⏳ Pending verification | Weather was added after the verified morning run |
 | 🌐 Further workers and real CI | 🧭 Future work | Implement and evaluate additional inputs |
 
 <a id="architecture"></a>
@@ -73,7 +74,7 @@ The runner imports each non-private Python module in `agents/`, calls `run()`, a
 | 🟦 Storage | Fixture, generated Markdown, and log file |
 | 🟢 Observable outcome | Report creation and successful exit |
 | 🔴 Failure | Logged worker exception and nonzero exit |
-| 🟡 Pending state | Automatic run awaiting evidence |
+| 🟡 Pending state | Automatic weather execution awaiting evidence |
 
 ## ✨ Features
 
@@ -152,7 +153,7 @@ This historical sample was retrieved at **2026-11-20T00:29:49.894568+00:00**, du
 
 ## 🧪 Results and verification
 
-![Controlled failure, Cedar continuation, normal recovery, and pending automatic execution](assets/reliability.svg)
+![Controlled failure, Cedar continuation, recovery, and verified automatic Cedar execution](assets/reliability.svg)
 
 | Check | Observed result |
 | --- | --- |
@@ -163,8 +164,8 @@ This historical sample was retrieved at **2026-11-20T00:29:49.894568+00:00**, du
 | ✅ Windows on-demand launch | Saved a fresh report and returned task result `0` |
 | ✅ Failure isolation | Temporary worker raised an error; Cedar completed; runner returned `1` |
 | ✅ Recovery | Later normal run saved a report and returned `0` |
-| 🟨 Daily trigger | Configured for 08:00 Windows local time |
-| ⏳ Automatic daily execution | Pending verification |
+| ✅ Automatic Cedar execution | November 19 at 08:00:01, task result `0`, Cedar report logged at 08:00:13 |
+| ⏳ Automatic weather execution | Pending; weather was added after the morning run |
 
 [Read the verification record and its evidence limits](docs/VERIFICATION.md).
 
@@ -197,7 +198,7 @@ Get-ScheduledTaskInfo -TaskName 'Project 9 - Local AI Assistant Scheduler' |
 Get-Content .\outputs\runner.log -Tail 5
 ```
 
-The last reported next run was November 19, 2026 at 08:00. An automatic-run result has yet to be supplied for verification.
+The automatic November 19, 2026 run started at **08:00:01**, returned **`0`**, and logged the saved Cedar report at **08:00:13,663**. The report was `cedar-ci-2026-11-19_08-00-13_632505.md`. The next reported run was November 20 at 08:00. Weather was added after the verified morning run; its automatic execution awaits evidence. [Automatic-run record](docs/VERIFICATION.md#automatic-daily-run)
 
 <a id="evidence"></a>
 
@@ -225,7 +226,7 @@ Reports use `outputs/cedar-ci-<timestamp>.md` and `outputs/weather-brief-<timest
 - 🕰️ The reviewed weather sample lacked an observation timestamp. Retrieval time alone does not establish observation age.
 - 🧠 Generated output receives empty/truncation checks. Factual support and bullet separation were manually reviewed on supplied examples. The code does not automatically check each fact or detect duplicate bullets.
 - 🧪 The recorded runs establish local execution and failure handling. Broader accuracy and performance evaluation remains future work.
-- 🗓️ Daily trigger registration is recorded; the first automatic run awaits verification.
+- 🗓️ One automatic Cedar run is verified. Weather was added later; automatic weather execution and repeated daily reliability await evidence.
 - 🌐 The tutorial's stock and news workers remain unimplemented.
 
 <a id="research"></a>
