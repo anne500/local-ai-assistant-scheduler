@@ -182,3 +182,13 @@ The user pulled commit `e6cb8c2` and supplied the following results from Novembe
 The supplied news report retained three feed headlines and their source URLs and publication dates. Each entry displayed **Headline only. The feed supplied no article excerpt.** All three source records contained `excerpt: ""` and `evidence_scope: "headline_only"`.
 
 This verifies the corrected report through the normal Windows runner entry point. The regression test confirms that empty-excerpt items skip model calls. Live summary quality for nonempty feed excerpts remains unverified. The initial 08:00 automatic scheduling evidence covers Cedar; the expanded four-worker automatic run still awaits evidence.
+
+## 🔎 CI extension prepared after the four-worker baseline
+
+The separately invoked `extensions.github_ci` implementation was built while waiting for the expanded automatic four-worker run. Authoring verification completed 22 offline checks, including ten CI checks, and a live public retrieval in metadata-only mode.
+
+The pinned source was Home Assistant BRI demo run `21890541227`, attempt `1`, created on February 11, 2026. It reported failure with one failed job `63195208285` and an empty steps list. The report explicitly recorded missing diagnostic logs and unavailable root cause.
+
+The normalized snapshot was retrieved at `2026-11-20T05:15:04.982647+00:00` and is saved under [docs/evidence](evidence/github-ci-21890541227.json). SHA-256 is `78fb8db7e29557b3d910f242577bb41ec07531b8a686d3305b67d4af8cedb22f`.
+
+Windows CI-extension execution and optional Qwen summary remain pending after automatic four-worker verification. Wider diagnosis-quality evaluation remains future work. See the [CI extension guide](GITHUB_CI_EXTENSION.md).

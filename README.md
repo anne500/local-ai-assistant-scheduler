@@ -42,7 +42,8 @@ This repository implements **AI News**, **Cedar CI**, **GOOGL Stock**, and **Wea
 | ➕ Implemented extension | 🌤️ Weather evidence | Saved JSON, source URL, and UTC retrieval time; distinct bullet responsibilities reviewed on one sample | [Weather verification](docs/VERIFICATION.md#weather-worker) |
 | ➕ Implemented extension | 📰 Headline-only boundary | Empty excerpts retain feed headlines and skip model generation; regression tested | [Verification record](docs/VERIFICATION.md#four-worker-windows-run) |
 | ➕ Implemented extension | 📂 Absolute project paths | Paths resolve from Python source locations for scheduled execution | [Runner](scheduler.py) · [Windows launch evidence](docs/VERIFICATION.md#windows-launch) |
-| 🧭 Planned extension | 🔎 Real CI evaluation | Representative build evidence and broader quality assessment | [Roadmap](#roadmap) |
+| ➕ Implemented extension | 🔎 Real CI evidence | Pinned public GitHub run/job retrieval, saved evidence, missing-data boundaries, and optional local summary; Windows check pending | [CI extension guide](docs/GITHUB_CI_EXTENSION.md) |
+| 🧭 Planned extension | 🧪 Broader CI evaluation | Representative diagnostic evidence and broader quality assessment | [Research scope](#research) |
 
 <a id="roadmap"></a>
 
@@ -62,7 +63,8 @@ This repository implements **AI News**, **Cedar CI**, **GOOGL Stock**, and **Wea
 | 🌤️ Automatic weather execution | ⏳ Pending verification | Weather was added after the verified morning run |
 | 📈 Stock | ✅ Windows run and sample verified | Quote 272.66 USD; previous close 282.44; change -9.78; percent -3.46 |
 | 📰 RSS news | ✅ Headline-only mode verified on Windows | Empty excerpts now receive an explicit headline-only label and skip model generation |
-| 🔎 Real CI evaluation | 🧭 Future work | Representative build evidence and quality assessment |
+| 🔎 Real CI metadata | 🟨 Built; Windows check pending | Pinned real-run retrieval passed; 22 offline tests passed |
+| 🧪 Broader CI evaluation | 🧭 Future work | Diagnostic logs, expected outcomes, and quality assessment |
 
 <a id="architecture"></a>
 
@@ -235,6 +237,9 @@ The automatic November 19, 2026 run started at **08:00:01**, returned **`0`**, a
 | [📰 agents/ai_news.py](agents/ai_news.py) | Public RSS digest with source links |
 | [🦙 agents/_ollama.py](agents/_ollama.py) | Shared local summarizer for stock and news, skipped by worker discovery |
 | [🧪 tests/test_new_workers.py](tests/test_new_workers.py) | Offline numeric, RSS, evidence, and response checks |
+| [🔎 extensions/github_ci.py](extensions/github_ci.py) | Explicitly invoked public CI evidence collection and brief |
+| [🧪 tests/test_github_ci.py](tests/test_github_ci.py) | Identity, missing-evidence, pagination, model failure, and consistent snapshot checks |
+| [📘 CI extension guide](docs/GITHUB_CI_EXTENSION.md) | Commands, historical source, saved snapshot, and verification sequence |
 | [📄 fixtures/cedar-ci.txt](fixtures/cedar-ci.txt) | Reproducible synthetic input |
 | [🧪 docs/VERIFICATION.md](docs/VERIFICATION.md) | Observed Windows runs and evidence boundaries |
 | [📊 docs/observed-timing.csv](docs/observed-timing.csv) | Timing values behind the chart |
@@ -247,7 +252,7 @@ Reports use `outputs/<worker-name>-<timestamp>.md`, with worker names `ai-news`,
 
 ## ⚠️ Limitations
 
-- 📄 Cedar uses a synthetic CI fixture. Real CI integration remains future work.
+- 📄 Cedar uses a synthetic fixture. The optional CI extension retrieves historical real-run metadata; Windows model verification remains pending.
 - 🌐 Weather retrieval requires network access to wttr.in. Model inference runs locally.
 - 🕰️ The reviewed weather sample lacked an observation timestamp. Retrieval time alone does not establish observation age.
 - 🧠 Generated output receives empty/truncation checks. Factual support and bullet separation were manually reviewed on supplied examples. The code does not automatically check each fact or detect duplicate bullets.
@@ -259,6 +264,12 @@ Reports use `outputs/<worker-name>-<timestamp>.md`, with worker names `ai-news`,
 - 🧠 Generated stock and news statements require source comparison. Quote calculations and source-link assembly are performed in Python.
 
 <a id="research"></a>
+
+## 🔎 Optional GitHub CI extension
+
+![Real GitHub CI evidence extension and verification boundaries](assets/github-ci-extension.svg)
+
+A separately invoked extension retrieves a pinned public run and attempt-specific jobs, records missing evidence, and saves JSON plus a Markdown brief with an evidence hash. The authoring metadata-mode check used a real historical hassfest failure. Follow the [CI extension guide](docs/GITHUB_CI_EXTENSION.md) after completing the automatic four-worker check.
 
 ## 🟪 Thesis connection
 

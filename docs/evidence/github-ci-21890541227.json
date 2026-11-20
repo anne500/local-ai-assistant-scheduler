@@ -1,0 +1,39 @@
+{
+  "repository": "anne500/home-assistant-bri-demo",
+  "retrieved_at_utc": "2026-11-20T05:15:04.982647+00:00",
+  "run": {
+    "id": 21890541227,
+    "name": "Validate with hassfest",
+    "status": "completed",
+    "conclusion": "failure",
+    "run_attempt": 1,
+    "head_sha": "3ba7a1742ae322d4241777fafb1d9860519c01a0",
+    "head_branch": "master",
+    "event": "schedule",
+    "created_at": "2026-02-11T02:33:54Z",
+    "run_started_at": "2026-02-11T02:33:54Z",
+    "updated_at": "2026-02-11T02:34:13Z",
+    "html_url": "https://github.com/anne500/home-assistant-bri-demo/actions/runs/21890541227"
+  },
+  "jobs": [
+    {
+      "id": 63195208285,
+      "name": "validate",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-02-11T02:33:57Z",
+      "completed_at": "2026-02-11T02:34:13Z",
+      "html_url": "https://github.com/anne500/home-assistant-bri-demo/actions/runs/21890541227/job/63195208285",
+      "steps": []
+    }
+  ],
+  "evidence_gaps": [
+    "Build logs were not retrieved; root cause is unavailable from this snapshot.",
+    "Job 63195208285 has no step metadata."
+  ],
+  "root_cause": "Unavailable: diagnostic logs were not retrieved.",
+  "sources": [
+    "https://api.github.com/repos/anne500/home-assistant-bri-demo/actions/runs/21890541227",
+    "https://api.github.com/repos/anne500/home-assistant-bri-demo/actions/runs/21890541227/attempts/1/jobs"
+  ]
+}
