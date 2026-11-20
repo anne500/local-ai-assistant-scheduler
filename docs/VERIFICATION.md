@@ -218,3 +218,20 @@ The reports recorded these SHA-256 values for their saved JSON evidence:
 - 🧠 Qwen mode: `df09f0a741d51640a89c09130cfda55f2509072df517c7e21ac25951247e0e82`.
 
 All 22 offline tests previously passed on Windows in **0.034 seconds**. Automatic execution of the expanded four-worker set remains pending verification. Broader diagnosis-quality evaluation requires additional evidence and cases.
+
+## ⚠️ November 20 interrupted scheduled run and recovery
+
+At the supplied Windows check on November 20, 2026 at 13:55:01, the task was Ready. Task Scheduler recorded LastRunTime **08:00:02**, LastTaskResult **3221225786**, and NextRunTime **November 21 at 08:00**.
+
+Only these reports were shown for the 08:00 invocation:
+
+- 📰 `ai-news-2026-11-20_08-00-05_353268.md`, logged at 08:00:05,354.
+- 📄 `cedar-ci-2026-11-20_08-00-19_837344.md`, logged at 08:00:19,847.
+
+The result converts to **0xC000013A (STATUS_CONTROL_C_EXIT)**, documented by Microsoft as a CTRL+C termination. The supplied evidence does not identify the specific source of the control event. Stock and weather completion were not observed for this invocation.
+
+The runner was updated to attach its console handler only when standard error is available. File logging always remains active. It now records worker-start and runner-completion messages. This supports using the virtual environment's windowless `pythonw.exe` in the Windows task action.
+
+All **24** offline tests passed in the authoring environment, including two subprocess tests that set `sys.stderr = None` and check successful output, failure continuation, exit status, and file logging. Windows recovery remains pending. A temporary one-time trigger alongside the daily trigger can verify scheduled execution promptly; remove that one-time trigger after verification.
+
+[Microsoft NTSTATUS reference](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55) · [Python Windows windowed commands](https://docs.python.org/3.14/using/windows.html)

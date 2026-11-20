@@ -1,5 +1,6 @@
 import importlib
 import logging
+import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -10,13 +11,13 @@ OUTPUTS_DIR = PROJECT_DIR / "outputs"
 
 def main() -> int:
     OUTPUTS_DIR.mkdir(exist_ok=True)
+    handlers = [logging.FileHandler(OUTPUTS_DIR / "runner.log", encoding="utf-8")]
+    if sys.stderr is not None:
+        handlers.append(logging.StreamHandler())
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(message)s",
-        handlers=[
-            logging.StreamHandler(),
-            logging.FileHandler(OUTPUTS_DIR / "runner.log", encoding="utf-8"),
-        ],
+        handlers=handlers,
     )
 
     workers = sorted(
@@ -29,6 +30,7 @@ def main() -> int:
     failed = False
     for path in workers:
         try:
+            logging.info("Worker starting: %s", path.name)
             worker = importlib.import_module(f"agents.{path.stem}")
             report = worker.run()
             timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S_%f")
@@ -39,7 +41,9 @@ def main() -> int:
             logging.exception("Worker failed: %s", path.name)
             failed = True
 
-    return int(failed)
+    exit_code = int(failed)
+    logging.info("Runner completed: workers=%s exit_code=%s", len(workers), exit_code)
+    return exit_code
 
 
 if __name__ == "__main__":

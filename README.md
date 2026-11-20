@@ -190,7 +190,7 @@ This historical sample was retrieved at **2026-11-20T00:29:49.894568+00:00**, du
 | ✅ Failure isolation | Temporary worker raised an error; Cedar completed; runner returned `1` |
 | ✅ Recovery | Later normal run saved a report and returned `0` |
 | ✅ Automatic Cedar execution | November 19 at 08:00:01, task result `0`, Cedar report logged at 08:00:13 |
-| ⏳ Automatic weather execution | Pending; weather was added after the morning run |
+| ⚠️ November 20 automatic run | Started at 08:00:02; saved news and Cedar, then exited with 3221225786 (0xC000013A); windowless recovery prepared |
 
 [Read the verification record and its evidence limits](docs/VERIFICATION.md).
 
@@ -212,7 +212,7 @@ These values describe one successful PowerShell smoke test. Remaining request ti
 
 The configured task is `Project 9 - Local AI Assistant Scheduler`. It uses the project's virtual-environment Python, an absolute script path, and the project working directory. The on-demand launch has been verified. Its daily trigger is configured at 08:00 Windows local time.
 
-For the current interactive-account setup, keep Windows signed in, the laptop awake, and Ollama running. The task allows battery operation, enables missed-run catch-up, and ignores new invocations while an instance is running.
+For the current interactive-account setup, keep Windows signed in, the laptop awake, and Ollama running. Configure the task action with `.venv\\Scripts\\pythonw.exe` for windowless execution. The runner always logs to `outputs/runner.log` and adds console logging when standard error is available. The task allows battery operation, enables missed-run catch-up, and ignores new invocations while an instance is running.
 
 Inspect the local registration and latest execution:
 
