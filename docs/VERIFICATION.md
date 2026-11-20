@@ -191,4 +191,30 @@ The pinned source was Home Assistant BRI demo run `21890541227`, attempt `1`, cr
 
 The normalized snapshot was retrieved at `2026-11-20T05:15:04.982647+00:00` and is saved under [docs/evidence](evidence/github-ci-21890541227.json). SHA-256 is `78fb8db7e29557b3d910f242577bb41ec07531b8a686d3305b67d4af8cedb22f`.
 
-Windows CI-extension execution and optional Qwen summary remain pending after automatic four-worker verification. Wider diagnosis-quality evaluation remains future work. See the [CI extension guide](GITHUB_CI_EXTENSION.md).
+The subsequent Windows CI-extension metadata and Qwen checks are recorded below. The CI extension can be verified independently of the automatic four-worker check. Wider diagnosis-quality evaluation remains future work. See the [CI extension guide](GITHUB_CI_EXTENSION.md).
+
+<a id="windows-ci-extension"></a>
+
+## ✅ Windows CI extension verification
+
+Both Windows invocations used Home Assistant BRI demo run **21890541227**, attempt **1**, with workflow **Validate with hassfest**, status **completed**, and conclusion **failure**. The run creation time remained **2026-02-11T02:33:54Z**.
+
+| Mode | Retrieval time (UTC) | Exit code | Saved evidence filename |
+| --- | --- | --- | --- |
+| 📄 Metadata only | 2026-11-20T05:38:07.536711+00:00 | 0 | `github-ci-21890541227-2026-11-20_05-38-07_538716-5dab80b7.json` |
+| 🧠 Local Qwen summary | 2026-11-20T05:39:09.475666+00:00 | 0 | `github-ci-21890541227-2026-11-20_05-39-09_475666-a6cca59d.json` |
+
+The user supplied both Markdown reports. Each recorded the failed job **63195208285**, an empty step list, and explicit unavailable root cause because diagnostic logs were not retrieved.
+
+The reviewed Qwen sentence was:
+
+> The GitHub workflow named "Validate with hassfest" for repository anne500/home-assistant-bri-demo, run ID 21890541227, completed with a failure conclusion.
+
+The sentence matched the workflow, repository, run ID, status, and conclusion. It added no cause, repair, or release decision. This is one reviewed historical failure case.
+
+The reports recorded these SHA-256 values for their saved JSON evidence:
+
+- 📄 Metadata only: `d19b03b7ce4f25d799bddb719d0cffb9e5d41e6c8758875a0173e9ed9c078985`.
+- 🧠 Qwen mode: `df09f0a741d51640a89c09130cfda55f2509072df517c7e21ac25951247e0e82`.
+
+All 22 offline tests previously passed on Windows in **0.034 seconds**. Automatic execution of the expanded four-worker set remains pending verification. Broader diagnosis-quality evaluation requires additional evidence and cases.

@@ -12,8 +12,8 @@
 | 🕰️ Historical run date and retrieval time | ✅ Both visible |
 | 🧩 Missing jobs, steps, and diagnostic logs | ✅ Explicit evidence gaps |
 | 🧪 Offline checks | ✅ All 22 tests passed on Windows in 0.034 seconds, including 10 CI checks |
-| 🔎 Pinned real-run metadata mode | ✅ Completed in authoring environment |
-| 🧠 Windows local-model summary | ⏳ Pending |
+| 🔎 Pinned real-run metadata mode | ✅ Completed in authoring environment and on Windows |
+| 🧠 Windows local-model summary | ✅ Completed; one sentence reviewed against metadata |
 | 🗓️ Expanded four-worker automatic run | ⏳ Pending |
 
 ## 🧭 Execution sequence
@@ -70,10 +70,16 @@ The [saved authoring snapshot](evidence/github-ci-21890541227.json) provides a f
 
 ## 🟪 Research scope
 
-This is an initial real-CI metadata and missing-evidence case. It supports inspection of source identity and unsupported-diagnosis handling. Broader diagnosis-quality evaluation needs representative runs, diagnostic logs, explicit expected outcomes, and separate review of model statements. Scheduled activation is a later integration step after Windows extension verification.
+This is an initial real-CI metadata and missing-evidence case. It supports inspection of source identity and unsupported-diagnosis handling. Broader diagnosis-quality evaluation needs representative runs, diagnostic logs, explicit expected outcomes, and separate review of model statements. Scheduled activation of this separately invoked extension remains a future integration step.
 
 ## 📚 API references
 
 GitHub documents public workflow-run and job retrieval, including attempt-specific jobs and pagination.
 
 [Workflow runs API](https://docs.github.com/en/rest/actions/workflow-runs) · [Workflow jobs API](https://docs.github.com/en/rest/actions/workflow-jobs)
+
+## 🧠 Reviewed Windows model summary
+
+The metadata-only and Qwen modes both returned `0`. The Qwen sentence accurately stated the workflow, repository, run ID, and completed/failure result. Both reports explicitly recorded unavailable root cause and missing diagnostic logs.
+
+[Windows verification record](VERIFICATION.md#windows-ci-extension)

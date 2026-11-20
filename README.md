@@ -42,7 +42,7 @@ This repository implements **AI News**, **Cedar CI**, **GOOGL Stock**, and **Wea
 | ➕ Implemented extension | 🌤️ Weather evidence | Saved JSON, source URL, and UTC retrieval time; distinct bullet responsibilities reviewed on one sample | [Weather verification](docs/VERIFICATION.md#weather-worker) |
 | ➕ Implemented extension | 📰 Headline-only boundary | Empty excerpts retain feed headlines and skip model generation; regression tested | [Verification record](docs/VERIFICATION.md#four-worker-windows-run) |
 | ➕ Implemented extension | 📂 Absolute project paths | Paths resolve from Python source locations for scheduled execution | [Runner](scheduler.py) · [Windows launch evidence](docs/VERIFICATION.md#windows-launch) |
-| ➕ Implemented extension | 🔎 Real CI evidence | Pinned public GitHub run/job retrieval, saved evidence, missing-data boundaries, and optional local summary; Windows check pending | [CI extension guide](docs/GITHUB_CI_EXTENSION.md) |
+| ➕ Implemented extension | 🔎 Real CI evidence | Pinned public GitHub run/job retrieval, saved evidence, missing-data boundaries, and optional local summary; Windows metadata and Qwen runs verified | [CI extension guide](docs/GITHUB_CI_EXTENSION.md) |
 | 🧭 Planned extension | 🧪 Broader CI evaluation | Representative diagnostic evidence and broader quality assessment | [Research scope](#research) |
 
 <a id="roadmap"></a>
@@ -63,7 +63,7 @@ This repository implements **AI News**, **Cedar CI**, **GOOGL Stock**, and **Wea
 | 🌤️ Automatic weather execution | ⏳ Pending verification | Weather was added after the verified morning run |
 | 📈 Stock | ✅ Windows run and sample verified | Quote 272.66 USD; previous close 282.44; change -9.78; percent -3.46 |
 | 📰 RSS news | ✅ Headline-only mode verified on Windows | Empty excerpts now receive an explicit headline-only label and skip model generation |
-| 🔎 Real CI metadata | 🟨 Built; Windows check pending | Pinned real-run retrieval passed; 22 offline tests passed |
+| 🔎 Real CI metadata and Qwen summary | ✅ Verified on Windows | Pinned real-run metadata and summary returned 0; reviewed against source |
 | 🧪 Broader CI evaluation | 🧭 Future work | Diagnostic logs, expected outcomes, and quality assessment |
 
 <a id="architecture"></a>
@@ -182,6 +182,7 @@ This historical sample was retrieved at **2026-11-20T00:29:49.894568+00:00**, du
 | ✅ Weather sample | Two distinct bullets matched all five weather values in the reviewed source |
 | ✅ New-worker offline checks | All 12 tests passed on Windows in 0.008 seconds and in the authoring environment |
 | ✅ Stock/RSS retrieval | Live endpoints parsed; report assembly checked with model responses stubbed |
+| ✅ Real CI extension | Metadata-only and Qwen modes saved evidence and reports; both returned 0 on Windows |
 | ✅ Four-worker Windows execution | All four reports saved; exit code 0 on November 19 |
 | ✅ Stock sample | Summary matched the supplied values and Python-computed -3.46% change |
 | ✅ Headline-only correction | Windows report retained three original headlines, missing-excerpt labels, and `headline_only` evidence scopes |
@@ -252,7 +253,7 @@ Reports use `outputs/<worker-name>-<timestamp>.md`, with worker names `ai-news`,
 
 ## ⚠️ Limitations
 
-- 📄 Cedar uses a synthetic fixture. The optional CI extension retrieves historical real-run metadata; Windows model verification remains pending.
+- 📄 Cedar uses a synthetic fixture. The optional CI extension retrieves historical real-run metadata; one Windows metadata and Qwen summary case is verified.
 - 🌐 Weather retrieval requires network access to wttr.in. Model inference runs locally.
 - 🕰️ The reviewed weather sample lacked an observation timestamp. Retrieval time alone does not establish observation age.
 - 🧠 Generated output receives empty/truncation checks. Factual support and bullet separation were manually reviewed on supplied examples. The code does not automatically check each fact or detect duplicate bullets.
@@ -269,7 +270,7 @@ Reports use `outputs/<worker-name>-<timestamp>.md`, with worker names `ai-news`,
 
 ![Real GitHub CI evidence extension and verification boundaries](assets/github-ci-extension.svg)
 
-A separately invoked extension retrieves a pinned public run and attempt-specific jobs, records missing evidence, and saves JSON plus a Markdown brief with an evidence hash. The authoring metadata-mode check used a real historical hassfest failure. Follow the [CI extension guide](docs/GITHUB_CI_EXTENSION.md) to verify the extension independently while the automatic four-worker run awaits evidence.
+A separately invoked extension retrieves a pinned public run and attempt-specific jobs, records missing evidence, and saves JSON plus a Markdown brief with an evidence hash. Authoring and Windows checks used a real historical hassfest failure; both Windows metadata-only and Qwen runs returned 0. Follow the [CI extension guide](docs/GITHUB_CI_EXTENSION.md) to verify the extension independently while the automatic four-worker run awaits evidence.
 
 ## 🟪 Thesis connection
 
