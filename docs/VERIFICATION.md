@@ -161,4 +161,24 @@ All three saved news entries had empty `excerpt` values. The output restated hea
 
 The corrected worker keeps the original feed headline and emits the exact message **Headline only. The feed supplied no article excerpt.** It sets `evidence_scope` to `headline_only` and skips the model call for that entry. Entries with excerpts use `feed_excerpt`; their prompt requests attribution to the post and forbids adding authors or affiliations.
 
-Twelve offline checks passed in the authoring environment after the correction. New checks cover zero model calls for headline-only input and the observed stock arithmetic. The updated headline-only path awaits Windows execution verification. Automatic scheduling evidence remains the earlier Cedar-only run.
+Twelve offline checks passed in the authoring environment after the correction. New checks cover zero model calls for headline-only input and the observed stock arithmetic. The subsequent Windows verification of the headline-only path is recorded below. Automatic scheduling evidence remains the earlier Cedar-only run.
+
+<a id="headline-only-windows-run"></a>
+
+## ✅ Headline-only correction verified on Windows
+
+The user pulled commit `e6cb8c2` and supplied the following results from November 19, 2026.
+
+| Check | Supplied evidence |
+| --- | --- |
+| 🧪 Regression checks | 12 tests passed in 0.008 seconds |
+| 📰 News report | `ai-news-2026-11-19_21-07-41_009197.md` |
+| 📄 Cedar report | `cedar-ci-2026-11-19_21-07-50_475437.md` |
+| 📈 GOOGL report | `googl-stock-2026-11-19_21-07-58_321034.md` |
+| 🌤️ Weather report | `weather-brief-2026-11-19_21-08-05_974808.md` |
+| 🟢 Runner exit code | `0` |
+| 🕰️ News retrieval time | `2026-11-20T05:07:41.009197+00:00` |
+
+The supplied news report retained three feed headlines and their source URLs and publication dates. Each entry displayed **Headline only. The feed supplied no article excerpt.** All three source records contained `excerpt: ""` and `evidence_scope: "headline_only"`.
+
+This verifies the corrected report through the normal Windows runner entry point. The regression test confirms that empty-excerpt items skip model calls. Live summary quality for nonempty feed excerpts remains unverified. The initial 08:00 automatic scheduling evidence covers Cedar; the expanded four-worker automatic run still awaits evidence.

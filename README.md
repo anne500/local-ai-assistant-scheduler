@@ -61,7 +61,7 @@ This repository implements **AI News**, **Cedar CI**, **GOOGL Stock**, and **Wea
 | 🔍 Automatic Cedar execution | ✅ Verified | Task result `0` and report saved at 08:00:13 on November 19 |
 | 🌤️ Automatic weather execution | ⏳ Pending verification | Weather was added after the verified morning run |
 | 📈 Stock | ✅ Windows run and sample verified | Quote 272.66 USD; previous close 282.44; change -9.78; percent -3.46 |
-| 📰 RSS news | 🟨 Windows execution verified; headline correction added | Empty excerpts now receive an explicit headline-only label and skip model generation |
+| 📰 RSS news | ✅ Headline-only mode verified on Windows | Empty excerpts now receive an explicit headline-only label and skip model generation |
 | 🔎 Real CI evaluation | 🧭 Future work | Representative build evidence and quality assessment |
 
 <a id="architecture"></a>
@@ -79,7 +79,7 @@ The runner imports each non-private Python module in `agents/`, calls `run()`, a
 | 🟦 Storage | Fixture, generated Markdown, and log file |
 | 🟢 Observable outcome | Report creation and successful exit |
 | 🔴 Failure | Logged worker exception and nonzero exit |
-| 🟡 Pending state | Automatic weather execution and updated headline-mode Windows run awaiting evidence |
+| 🟡 Pending state | Automatic execution of the expanded four-worker set awaits evidence |
 
 ## ✨ Features
 
@@ -178,11 +178,11 @@ This historical sample was retrieved at **2026-11-20T00:29:49.894568+00:00**, du
 | ✅ Python worker | Saved Markdown with summary and source evidence |
 | ✅ Runner | Discovered Cedar and weather, saved both reports, and returned `0` |
 | ✅ Weather sample | Two distinct bullets matched all five weather values in the reviewed source |
-| ✅ New-worker offline checks | Initial 10 tests passed on Windows; updated 12 tests passed in the authoring environment |
+| ✅ New-worker offline checks | All 12 tests passed on Windows in 0.008 seconds and in the authoring environment |
 | ✅ Stock/RSS retrieval | Live endpoints parsed; report assembly checked with model responses stubbed |
 | ✅ Four-worker Windows execution | All four reports saved; exit code 0 on November 19 |
 | ✅ Stock sample | Summary matched the supplied values and Python-computed -3.46% change |
-| 🟨 Headline-only correction | Empty news excerpts now skip generation; updated Windows run awaits verification |
+| ✅ Headline-only correction | Windows report retained three original headlines, missing-excerpt labels, and `headline_only` evidence scopes |
 | ✅ Windows on-demand launch | Saved a fresh report and returned task result `0` |
 | ✅ Failure isolation | Temporary worker raised an error; Cedar completed; runner returned `1` |
 | ✅ Recovery | Later normal run saved a report and returned `0` |
@@ -254,7 +254,7 @@ Reports use `outputs/<worker-name>-<timestamp>.md`, with worker names `ai-news`,
 - 🧪 The recorded runs establish local execution and failure handling. Broader accuracy and performance evaluation remains future work.
 - 🗓️ One automatic Cedar run is verified. Weather was added later; automatic weather execution and repeated daily reliability await evidence.
 - 📈 One stock summary matched its saved values. External services can return errors or rate limits.
-- 📰 The initial news run supplied headlines with empty excerpts. The headline-only correction is covered by offline regression tests; an updated Windows run awaits verification.
+- 📰 The reviewed news feed supplied headlines with empty excerpts. Headline-only fallback is verified on Windows. Live excerpt-based summary quality remains unverified.
 - 📰 The news digest covers one publisher's feed entries. Entries without excerpts are explicitly labeled headline-only. Publication dates and source links are retained; broader news coverage and freshness guarantees require further evaluation.
 - 🧠 Generated stock and news statements require source comparison. Quote calculations and source-link assembly are performed in Python.
 
