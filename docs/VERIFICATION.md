@@ -1,6 +1,6 @@
 # 🧪 Project 9 verification record
 
-This record transcribes evidence supplied from the Windows PowerShell session on November 17 and 18, 2026. The raw reports and runner log remain on that laptop under `outputs/`. The observations below were reviewed from the supplied console output.
+This record transcribes evidence supplied from the Windows PowerShell session on November 17–19, 2026. The raw reports and runner log remain on that laptop under `outputs/`. The observations below were reviewed from the supplied console output.
 
 <a id="local-inference"></a>
 
@@ -54,6 +54,48 @@ A temporary `agents/aaa_failure_demo.py` defined `run()` to raise `RuntimeError(
 
 The normal run supports recovery after the controlled test. The supplied transcript did not include a separate `Test-Path` result for the removed file.
 
+<a id="weather-worker"></a>
+
+## 🌤️ Weather worker and two-worker execution
+
+The weather worker was published in commit `ec5b53bcf1668ab9ccfff0a436d0fac2d4b912a4`. Its `LOCATION` is the tutorial sample, New York. It fetches wttr.in JSON, records selected source values and UTC retrieval time, then requests a local Ollama summary.
+
+| Check | Supplied evidence |
+| --- | --- |
+| ✅ Two-worker discovery | Cedar and weather reports saved in the same invocation |
+| ✅ Process result | Runner exit code `0` |
+| 📝 Cedar report | `cedar-ci-2026-11-19_16-29-49_001337.md` |
+| 🌤️ Weather report | `weather-brief-2026-11-19_16-29-58_279993.md` |
+| 🕰️ Retrieval timestamp | `2026-11-20T00:29:49.894568+00:00` |
+| 🔎 Source | `https://wttr.in/New%20York?format=j1` |
+| ⏳ Observation timestamp | `Unavailable` |
+
+### 📄 Reviewed output and source values
+
+> In New York, the weather is clear with a temperature of 54°F and a feels-like temperature of 51°F.
+>
+> The humidity is at 55% and the wind speed is 4 mph.
+
+| Field | Saved source | Generated summary |
+| --- | --- | --- |
+| 📍 Requested location | New York | New York |
+| 🌤️ Description | `Clear ` | clear |
+| 🌡️ Temperature | 54 F | 54°F |
+| 🧥 Feels like | 51 F | 51°F |
+| 💧 Humidity | 55 percent | 55% |
+| 🌬️ Wind speed | 4 mph | 4 mph |
+
+The reviewed sample matched each supplied field. This was a manual comparison with retrieved JSON. Independent weather observation accuracy was not evaluated.
+
+### 🛠️ Prompt and display corrections
+
+1. An earlier summary linked wind to feels-like temperature with a causal phrase. The prompt was tightened to report the supplied values independently.
+2. A subsequent summary repeated both bullets. The final prompt assigns temperature and conditions to bullet 1, humidity and wind to bullet 2.
+3. The final supplied sample produced distinct bullets and preserved the supplied values.
+4. An earlier PowerShell read displayed `Â°F`. Reading with `Get-Content -Encoding UTF8` displayed `°F` correctly.
+
+The worker checks empty and truncated output. Factual support and bullet separation are prompt instructions with manual sample review. The missing observation timestamp prevents a freshness claim based on retrieval time alone.
+
 ## 🗓️ Daily trigger
 
 The daily 08:00 registration was supplied with missed-run catch-up, `IgnoreNew` for overlapping task invocations, and battery-operation settings. The last reported `NextRunTime` was **November 19, 2026 at 08:00 Windows local time**.
@@ -63,6 +105,6 @@ The daily 08:00 registration was supplied with missed-run catch-up, `IgnoreNew` 
 ## 🔬 Evidence boundaries
 
 - 📄 Cedar uses synthetic local CI evidence.
-- 🧠 Factual preservation in the example was manually reviewed. The code checks empty and truncated responses.
+- 🧠 Cedar and weather source comparisons were manually reviewed. The code checks empty and truncated responses.
 - 🪟 Windows execution was demonstrated. Other operating systems were not exercised in the supplied record.
-- 🧪 No additional runtime or model tests were performed as part of the visual documentation update.
+- 🧪 Weather executions were run on the Windows laptop and reviewed from supplied console output. Documentation updates did not rerun the model.

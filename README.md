@@ -4,7 +4,7 @@
 
 **🟦 Learn AI · 🟩 Portfolio evidence · 🟪 PhD research**
 
-Run local AI workers with Python, Ollama, and Windows Task Scheduler. The Cedar worker summarizes synthetic CI evidence into a timestamped Markdown brief.
+Run local AI workers with Python, Ollama, and Windows Task Scheduler. Two workers summarize synthetic Cedar CI evidence and retrieved New York weather into timestamped Markdown briefs.
 
 ## 🧭 Explore the project
 
@@ -24,7 +24,7 @@ Run local AI workers with Python, Ollama, and Windows Task Scheduler. The Cedar 
 
 Darsh Shah's tutorial introduces a Python runner, discoverable workers, local Ollama inference, saved Markdown reports, and OS scheduling. Its example workers cover stock quotes, AI news, and weather.
 
-This repository currently implements one permanent **Cedar CI worker**, using a synthetic local fixture. Stock, weather, and news workers remain future implementation work.
+This repository implements two permanent workers: **Cedar CI** reads a synthetic fixture, and **Weather Brief** retrieves New York conditions from wttr.in. Stock and news workers remain future work.
 
 <a id="contributions"></a>
 
@@ -33,9 +33,11 @@ This repository currently implements one permanent **Cedar CI worker**, using a 
 | Origin | Item | Scope or contribution | Verification |
 | --- | --- | --- | --- |
 | 🟦 Tutorial baseline | 📘 Runner pattern | Worker discovery, local inference, Markdown output, and OS scheduling, based on Darsh Shah's freeCodeCamp tutorial | [Original tutorial](https://www.freecodecamp.org/news/how-to-build-and-schedule-local-ai-assistants-for-daily-tasks/) |
+| 🟦 Tutorial baseline | 🌤️ Weather worker | Implements the tutorial weather example using wttr.in and local Ollama | [Worker](agents/weather_brief.py) · [Weather verification](docs/VERIFICATION.md#weather-worker) |
 | 🔧 Adaptation | 📄 Cedar evidence | A synthetic CI fixture and standard-library HTTP client replace the tutorial's external-data examples | [Worker](agents/cedar_ci.py) · [Fixture](fixtures/cedar-ci.txt) |
-| 🔧 Adaptation | 🧠 Bounded generation | Thinking disabled, temperature 0, 64-token limit, 180-second HTTP timeout | [Worker settings](agents/cedar_ci.py) |
+| 🔧 Adaptation | 🧠 Bounded generation | Thinking disabled, temperature 0, 64 tokens for Cedar and 128 for weather, 180-second model HTTP timeout | [Worker settings](agents/cedar_ci.py) |
 | ➕ Implemented extension | 🛡️ Observable failure handling | File logging and a failure exit code, with continuation after a worker fails | [Runner](scheduler.py) · [Observed failure and recovery](docs/VERIFICATION.md#failure-and-recovery) |
+| ➕ Implemented extension | 🌤️ Weather evidence | Saved JSON, source URL, and UTC retrieval time; distinct bullet responsibilities reviewed on one sample | [Weather verification](docs/VERIFICATION.md#weather-worker) |
 | ➕ Implemented extension | 📂 Absolute project paths | Paths resolve from Python source locations for scheduled execution | [Runner](scheduler.py) · [Windows launch evidence](docs/VERIFICATION.md#windows-launch) |
 | 🧭 Planned extension | 🔎 Additional workers and real CI | Further tutorial workers and evaluation with real build evidence | [Roadmap](#roadmap) |
 
@@ -48,7 +50,8 @@ This repository currently implements one permanent **Cedar CI worker**, using a 
 | Stage | Status | Evidence or next action |
 | --- | --- | --- |
 | 🧠 Local inference | ✅ Verified | Cedar facts preserved in one-sentence output |
-| ⚙️ Worker and runner | ✅ Verified | Timestamped report and exit code `0` |
+| ⚙️ Workers and runner | ✅ Verified | Cedar and weather reports saved; exit code `0` |
+| 🌤️ Weather summary | ✅ One sample reviewed | Clear, 54°F, feels like 51°F, humidity 55%, wind 4 mph |
 | 🪟 Windows task launch | ✅ Verified on demand | Fresh report and `LastTaskResult = 0` |
 | 🛡️ Failure and recovery | ✅ Verified | Controlled failure returns `1`; later normal run returns `0` |
 | 🗓️ Daily trigger | 🟨 Configured | Daily at 08:00 Windows local time |
@@ -59,13 +62,13 @@ This repository currently implements one permanent **Cedar CI worker**, using a 
 
 ## 🧩 Architecture
 
-![Task Scheduler, runner, Cedar fixture, local Ollama, report storage, and run record](assets/workflow.svg)
+![Task Scheduler, two sequential workers, separate inputs, shared local Ollama, reports and logs](assets/workflow.svg)
 
-The runner imports each non-private Python module in `agents/`, calls `run()`, and writes its returned text to `outputs/`. Cedar reads the fixture and asks local Ollama for one sentence. The runner catches a worker exception, logs it, and proceeds to the next worker.
+The runner imports each non-private Python module in `agents/`, calls `run()`, and writes its returned text to `outputs/`. Cedar reads the fixture and asks local Ollama for one sentence. Weather retrieves New York conditions and requests two bullets covering distinct fields. Workers run sequentially, Cedar before weather. The runner catches a worker exception, logs it, and proceeds to the next worker.
 
 | Color and role | Components |
 | --- | --- |
-| 🔵 Processing | Task Scheduler launch, Python runner, Cedar worker |
+| 🔵 Processing | Task Scheduler launch, Python runner, Cedar and weather workers |
 | 🟣 Model | Local Ollama and `qwen3.5:4b` |
 | 🟦 Storage | Fixture, generated Markdown, and log file |
 | 🟢 Observable outcome | Report creation and successful exit |
@@ -76,7 +79,8 @@ The runner imports each non-private Python module in `agents/`, calls `run()`, a
 
 - 🧠 Local inference through Ollama at `http://127.0.0.1:11434`.
 - 📂 Automatic discovery of worker modules exposing `NAME` and `run()`.
-- 📝 Timestamped Markdown reports containing the summary and synthetic source evidence.
+- 📝 Timestamped Markdown reports containing each summary and source evidence.
+- 🌤️ Weather briefs retain source values, source URL, and UTC retrieval time.
 - 📋 Console and file logging through Python's standard library.
 - 🛡️ Continuation after an individual worker fails.
 - 🚦 Exit code `0` for all workers succeeding, `1` for a worker failure or no discovered workers.
@@ -112,10 +116,12 @@ To run the Cedar worker directly:
 
 | Setting | Current value | Location |
 | --- | --- | --- |
-| 🧠 Model | `qwen3.5:4b` | `agents/cedar_ci.py` |
+| 🧠 Model | `qwen3.5:4b` | Both worker payloads |
 | 💭 Thinking | `False` | Worker payload |
 | 🎛️ Temperature | `0` | Worker payload |
-| 📏 Output budget | `64` tokens | Worker payload |
+| 📏 Output budget | Cedar `64`, weather `128` tokens | Worker payloads |
+| 🌐 Weather request timeout | `30` seconds | Weather worker |
+| 📍 Weather location | `New York` | Weather `LOCATION` constant |
 | ⏱️ Request timeout | `180` seconds | Worker HTTP call |
 | 🗓️ Daily schedule | `08:00` Windows local time | Windows task registration |
 | 📄 Evidence | `fixtures/cedar-ci.txt` | Local synthetic fixture |
@@ -132,6 +138,16 @@ To run the Cedar worker directly:
 
 The saved report includes both the generated sentence and a section labeled **Source evidence (synthetic)**.
 
+### 🌤️ Observed weather brief
+
+![Weather source values and generated bullets from the reviewed November 19 sample](assets/weather-verification.svg)
+
+> In New York, the weather is clear with a temperature of 54°F and a feels-like temperature of 51°F.
+>
+> The humidity is at 55% and the wind speed is 4 mph.
+
+This historical sample was retrieved at **2026-11-20T00:29:49.894568+00:00**, during the November 19 Windows run. Its five weather values matched the saved JSON. The observation time was unavailable. [Reviewed evidence and prompt corrections](docs/VERIFICATION.md#weather-worker)
+
 <a id="verification"></a>
 
 ## 🧪 Results and verification
@@ -142,7 +158,8 @@ The saved report includes both the generated sentence and a section labeled **So
 | --- | --- |
 | ✅ Local inference | Correct summary; initial successful PowerShell request reported 11.51 seconds total |
 | ✅ Python worker | Saved Markdown with summary and source evidence |
-| ✅ Runner | Discovered Cedar and returned `0` |
+| ✅ Runner | Discovered Cedar and weather, saved both reports, and returned `0` |
+| ✅ Weather sample | Two distinct bullets matched all five weather values in the reviewed source |
 | ✅ Windows on-demand launch | Saved a fresh report and returned task result `0` |
 | ✅ Failure isolation | Temporary worker raised an error; Cedar completed; runner returned `1` |
 | ✅ Recovery | Later normal run saved a report and returned `0` |
@@ -190,6 +207,7 @@ The last reported next run was November 19, 2026 at 08:00. An automatic-run resu
 | --- | --- |
 | [⚙️ scheduler.py](scheduler.py) | Worker discovery, logging, report writing, and exit status |
 | [🧠 agents/cedar_ci.py](agents/cedar_ci.py) | Local model request and synthetic CI brief |
+| [🌤️ agents/weather_brief.py](agents/weather_brief.py) | Retrieved weather, two-bullet summary, and saved source JSON |
 | [📄 fixtures/cedar-ci.txt](fixtures/cedar-ci.txt) | Reproducible synthetic input |
 | [🧪 docs/VERIFICATION.md](docs/VERIFICATION.md) | Observed Windows runs and evidence boundaries |
 | [📊 docs/observed-timing.csv](docs/observed-timing.csv) | Timing values behind the chart |
@@ -198,15 +216,17 @@ The last reported next run was November 19, 2026 at 08:00. An automatic-run resu
 
 ## 💾 Storage
 
-Reports use `outputs/cedar-ci-<timestamp>.md`. The runner appends to `outputs/runner.log`. Reports, logs, virtual environments, Python caches, and environment files are excluded by `.gitignore`.
+Reports use `outputs/cedar-ci-<timestamp>.md` and `outputs/weather-brief-<timestamp>.md`. The runner appends to `outputs/runner.log`. Reports, logs, virtual environments, Python caches, and environment files are excluded by `.gitignore`.
 
 ## ⚠️ Limitations
 
-- 📄 The permanent worker uses a synthetic CI fixture. Real CI integration remains future work.
-- 🧠 Generated output receives empty/truncation checks. Factual preservation in the observed Cedar run was reviewed manually.
+- 📄 Cedar uses a synthetic CI fixture. Real CI integration remains future work.
+- 🌐 Weather retrieval requires network access to wttr.in. Model inference runs locally.
+- 🕰️ The reviewed weather sample lacked an observation timestamp. Retrieval time alone does not establish observation age.
+- 🧠 Generated output receives empty/truncation checks. Factual support and bullet separation were manually reviewed on supplied examples. The code does not automatically check each fact or detect duplicate bullets.
 - 🧪 The recorded runs establish local execution and failure handling. Broader accuracy and performance evaluation remains future work.
 - 🗓️ Daily trigger registration is recorded; the first automatic run awaits verification.
-- 🌐 The tutorial's stock, weather, and news workers remain unimplemented.
+- 🌐 The tutorial's stock and news workers remain unimplemented.
 
 <a id="research"></a>
 
@@ -226,5 +246,5 @@ We acknowledge **Darsh Shah**, author of the foundational tutorial published by 
 | --- | --- |
 | 👨‍🏫 Darsh Shah | Original tutorial and learning foundation |
 | 📚 freeCodeCamp | Tutorial publisher |
-| 🛠️ Repository adaptations | Cedar fixture, standard-library HTTP client, and bounded generation settings |
-| 🧪 Repository extensions | File logging, failure exit codes, absolute project paths, and recorded failure/recovery checks |
+| 🛠️ Repository adaptations | Cedar fixture, standard-library HTTP clients, bounded generation, and weather bullet responsibilities |
+| 🧪 Repository extensions | File logging, failure exit codes, absolute project paths, weather evidence retention, and recorded verification checks |
