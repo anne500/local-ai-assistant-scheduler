@@ -60,7 +60,7 @@ This repository implements **AI News**, **Cedar CI**, **GOOGL Stock**, and **Wea
 | 🛡️ Failure and recovery | ✅ Verified | Controlled failure returns `1`; later normal run returns `0` |
 | 🗓️ Daily trigger | ✅ Configured and exercised | November 19 at 08:00:01 Windows local time |
 | 🔍 Automatic Cedar execution | ✅ Verified | Task result `0` and report saved at 08:00:13 on November 19 |
-| 🌤️ Automatic weather execution | ⏳ Pending verification | Weather was added after the verified morning run |
+| 🗓️ Automatic four-worker execution | ✅ Verified with one-time trigger | November 20 at 14:13:59–14:14:38; four reports saved; runner exit code 0 |
 | 📈 Stock | ✅ Windows run and sample verified | Quote 272.66 USD; previous close 282.44; change -9.78; percent -3.46 |
 | 📰 RSS news | ✅ Headline-only mode verified on Windows | Empty excerpts now receive an explicit headline-only label and skip model generation |
 | 🔎 Real CI metadata and Qwen summary | ✅ Verified on Windows | Pinned real-run metadata and summary returned 0; reviewed against source |
@@ -81,7 +81,7 @@ The runner imports each non-private Python module in `agents/`, calls `run()`, a
 | 🟦 Storage | Fixture, generated Markdown, and log file |
 | 🟢 Observable outcome | Report creation and successful exit |
 | 🔴 Failure | Logged worker exception and nonzero exit |
-| 🟡 Pending state | Automatic execution of the expanded four-worker set awaits evidence |
+| 🟡 Pending state | Future work and broader evaluation carry explicit status labels |
 
 ## ✨ Features
 
@@ -180,7 +180,7 @@ This historical sample was retrieved at **2026-11-20T00:29:49.894568+00:00**, du
 | ✅ Python worker | Saved Markdown with summary and source evidence |
 | ✅ Runner | Discovered Cedar and weather, saved both reports, and returned `0` |
 | ✅ Weather sample | Two distinct bullets matched all five weather values in the reviewed source |
-| ✅ New-worker offline checks | All 12 tests passed on Windows in 0.008 seconds and in the authoring environment |
+| ✅ Offline checks | All 24 tests passed on Windows in 0.300 seconds, including CI and windowless-runner checks |
 | ✅ Stock/RSS retrieval | Live endpoints parsed; report assembly checked with model responses stubbed |
 | ✅ Real CI extension | Metadata-only and Qwen modes saved evidence and reports; both returned 0 on Windows |
 | ✅ Four-worker Windows execution | All four reports saved; exit code 0 on November 19 |
@@ -190,7 +190,8 @@ This historical sample was retrieved at **2026-11-20T00:29:49.894568+00:00**, du
 | ✅ Failure isolation | Temporary worker raised an error; Cedar completed; runner returned `1` |
 | ✅ Recovery | Later normal run saved a report and returned `0` |
 | ✅ Automatic Cedar execution | November 19 at 08:00:01, task result `0`, Cedar report logged at 08:00:13 |
-| ⚠️ November 20 automatic run | Started at 08:00:02; saved news and Cedar, then exited with 3221225786 (0xC000013A); windowless recovery prepared |
+| ⚠️ November 20 morning run | Interrupted after two workers with 0xC000013A; recorded in the verification history |
+| ✅ Windowless scheduled recovery | Automatic one-time trigger saved all four reports; runner exit code 0 |
 
 [Read the verification record and its evidence limits](docs/VERIFICATION.md).
 
@@ -212,7 +213,7 @@ These values describe one successful PowerShell smoke test. Remaining request ti
 
 The configured task is `Project 9 - Local AI Assistant Scheduler`. It uses the project's virtual-environment Python, an absolute script path, and the project working directory. The on-demand launch has been verified. Its daily trigger is configured at 08:00 Windows local time.
 
-For the current interactive-account setup, keep Windows signed in, the laptop awake, and Ollama running. Configure the task action with `.venv\\Scripts\\pythonw.exe` for windowless execution. The runner always logs to `outputs/runner.log` and adds console logging when standard error is available. The task allows battery operation, enables missed-run catch-up, and ignores new invocations while an instance is running.
+For the current interactive-account setup, keep Windows signed in, the laptop awake, and Ollama running. Configure the task action with `.venv\Scripts\pythonw.exe` for windowless execution. The runner always logs to `outputs/runner.log` and adds console logging when standard error is available. The task allows battery operation, enables missed-run catch-up, and ignores new invocations while an instance is running.
 
 Inspect the local registration and latest execution:
 
@@ -223,7 +224,7 @@ Get-ScheduledTaskInfo -TaskName 'Project 9 - Local AI Assistant Scheduler' |
 Get-Content .\outputs\runner.log -Tail 5
 ```
 
-The automatic November 19, 2026 run started at **08:00:01**, returned **`0`**, and logged the saved Cedar report at **08:00:13,663**. The report was `cedar-ci-2026-11-19_08-00-13_632505.md`. The next reported run was November 20 at 08:00. Weather was added after the verified morning run; its automatic execution awaits evidence. [Automatic-run record](docs/VERIFICATION.md#automatic-daily-run)
+The automatic November 19, 2026 run started at **08:00:01**, returned **`0`**, and logged the saved Cedar report at **08:00:13,663**. The report was `cedar-ci-2026-11-19_08-00-13_632505.md`. The next reported run was November 20 at 08:00. The expanded four-worker set subsequently passed a one-time scheduled run at 14:13:59 on November 20 using windowless Python; all four reports were saved and the runner logged exit code 0. [Automatic-run record](docs/VERIFICATION.md#automatic-daily-run)
 
 <a id="evidence"></a>
 
@@ -258,7 +259,7 @@ Reports use `outputs/<worker-name>-<timestamp>.md`, with worker names `ai-news`,
 - 🕰️ The reviewed weather sample lacked an observation timestamp. Retrieval time alone does not establish observation age.
 - 🧠 Generated output receives empty/truncation checks. Factual support and bullet separation were manually reviewed on supplied examples. The code does not automatically check each fact or detect duplicate bullets.
 - 🧪 The recorded runs establish local execution and failure handling. Broader accuracy and performance evaluation remains future work.
-- 🗓️ One automatic Cedar run is verified. Weather was added later; automatic weather execution and repeated daily reliability await evidence.
+- 🗓️ Automatic Cedar execution and one scheduled four-worker recovery are verified. Repeated daily reliability requires further observations.
 - 📈 One stock summary matched its saved values. External services can return errors or rate limits.
 - 📰 The reviewed news feed supplied headlines with empty excerpts. Headline-only fallback is verified on Windows. Live excerpt-based summary quality remains unverified.
 - 📰 The news digest covers one publisher's feed entries. Entries without excerpts are explicitly labeled headline-only. Publication dates and source links are retained; broader news coverage and freshness guarantees require further evaluation.
@@ -270,7 +271,7 @@ Reports use `outputs/<worker-name>-<timestamp>.md`, with worker names `ai-news`,
 
 ![Real GitHub CI evidence extension and verification boundaries](assets/github-ci-extension.svg)
 
-A separately invoked extension retrieves a pinned public run and attempt-specific jobs, records missing evidence, and saves JSON plus a Markdown brief with an evidence hash. Authoring and Windows checks used a real historical hassfest failure; both Windows metadata-only and Qwen runs returned 0. Follow the [CI extension guide](docs/GITHUB_CI_EXTENSION.md) to verify the extension independently while the automatic four-worker run awaits evidence.
+A separately invoked extension retrieves a pinned public run and attempt-specific jobs, records missing evidence, and saves JSON plus a Markdown brief with an evidence hash. Authoring and Windows checks used a real historical hassfest failure; both Windows metadata-only and Qwen runs returned 0. Follow the [CI extension guide](docs/GITHUB_CI_EXTENSION.md) for the independently verified Windows extension commands and source evidence.
 
 ## 🟪 Thesis connection
 

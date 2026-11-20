@@ -115,7 +115,7 @@ The supplied Task Scheduler status and matching runner log establish one automat
 
 **✅ Automatic Cedar execution is verified from the matching task status and saved-report log entry.** The report contents from this particular run were not supplied for separate factual review.
 
-**⏳ Automatic weather execution awaits verification.** The weather worker was added in the afternoon, after the verified morning invocation. Its manual two-worker runs are recorded above. Further daily runs would establish repeated operation.
+**Historical status at this stage: automatic weather execution awaited verification.** The weather worker was added in the afternoon, after the verified morning invocation. Its manual two-worker runs are recorded above. Further daily runs would establish repeated operation.
 
 ## 🔬 Evidence boundaries
 
@@ -181,7 +181,7 @@ The user pulled commit `e6cb8c2` and supplied the following results from Novembe
 
 The supplied news report retained three feed headlines and their source URLs and publication dates. Each entry displayed **Headline only. The feed supplied no article excerpt.** All three source records contained `excerpt: ""` and `evidence_scope: "headline_only"`.
 
-This verifies the corrected report through the normal Windows runner entry point. The regression test confirms that empty-excerpt items skip model calls. Live summary quality for nonempty feed excerpts remains unverified. The initial 08:00 automatic scheduling evidence covers Cedar; the expanded four-worker automatic run still awaits evidence.
+This verifies the corrected report through the normal Windows runner entry point. The regression test confirms that empty-excerpt items skip model calls. Live summary quality for nonempty feed excerpts remains unverified. The initial 08:00 automatic scheduling evidence covers Cedar; the subsequent expanded four-worker recovery is recorded below.
 
 ## 🔎 CI extension prepared after the four-worker baseline
 
@@ -217,7 +217,7 @@ The reports recorded these SHA-256 values for their saved JSON evidence:
 - 📄 Metadata only: `d19b03b7ce4f25d799bddb719d0cffb9e5d41e6c8758875a0173e9ed9c078985`.
 - 🧠 Qwen mode: `df09f0a741d51640a89c09130cfda55f2509072df517c7e21ac25951247e0e82`.
 
-All 22 offline tests previously passed on Windows in **0.034 seconds**. Automatic execution of the expanded four-worker set remains pending verification. Broader diagnosis-quality evaluation requires additional evidence and cases.
+All 22 offline tests previously passed on Windows in **0.034 seconds**. Automatic execution of the expanded set was subsequently verified in the windowless recovery recorded below. Broader diagnosis-quality evaluation requires additional evidence and cases.
 
 ## ⚠️ November 20 interrupted scheduled run and recovery
 
@@ -232,6 +232,25 @@ The result converts to **0xC000013A (STATUS_CONTROL_C_EXIT)**, documented by Mic
 
 The runner was updated to attach its console handler only when standard error is available. File logging always remains active. It now records worker-start and runner-completion messages. This supports using the virtual environment's windowless `pythonw.exe` in the Windows task action.
 
-All **24** offline tests passed in the authoring environment, including two subprocess tests that set `sys.stderr = None` and check successful output, failure continuation, exit status, and file logging. Windows recovery remains pending. A temporary one-time trigger alongside the daily trigger can verify scheduled execution promptly; remove that one-time trigger after verification.
+All **24** offline tests passed in the authoring environment, including two subprocess tests that set `sys.stderr = None` and check successful output, failure continuation, exit status, and file logging. The subsequent Windows recovery is recorded below. A temporary one-time trigger alongside the daily trigger can verify scheduled execution promptly; remove that one-time trigger after verification.
 
 [Microsoft NTSTATUS reference](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55) · [Python Windows windowed commands](https://docs.python.org/3.14/using/windows.html)
+
+<a id="windowless-scheduled-recovery"></a>
+
+## ✅ November 20 windowless scheduled recovery
+
+The user pulled commit `cf95765`. All **24 tests passed on Windows in 0.300 seconds**. The task action was changed to the virtual environment's `pythonw.exe`, and a one-time trigger was configured for **November 20, 2026 at 14:13:58** alongside the daily 08:00 trigger.
+
+The supplied runner log records automatic execution beginning at **14:13:59,034**:
+
+| Worker | Saved report | Log time |
+| --- | --- | --- |
+| 📰 AI news | `ai-news-2026-11-20_14-14-00_021509.md` | 14:14:00,022 |
+| 📄 Cedar | `cedar-ci-2026-11-20_14-14-13_711208.md` | 14:14:13,977 |
+| 📈 GOOGL | `googl-stock-2026-11-20_14-14-28_022819.md` | 14:14:28,025 |
+| 🌤️ Weather | `weather-brief-2026-11-20_14-14-38_614553.md` | 14:14:38,700 |
+
+The final entry was `2026-11-20 14:14:38,902 INFO Runner completed: workers=4 exit_code=0`.
+
+This verifies all four workers completing through an automatic one-time trigger with windowless Python. Task Scheduler's final result code and removal of the temporary trigger await the follow-up check. Repeated daily reliability remains a broader observation task. The earlier 08:00 console interruption is preserved above; its exact initiating source remains unknown.
