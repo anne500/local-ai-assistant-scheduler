@@ -269,7 +269,7 @@ Reports use `outputs/<worker-name>-<timestamp>.md`, with worker names `ai-news`,
 
 ![Real GitHub CI evidence extension and verification boundaries](assets/github-ci-extension.svg)
 
-A separately invoked extension retrieves a pinned public run and attempt-specific jobs, records missing evidence, and saves JSON plus a Markdown brief with an evidence hash. The authoring metadata-mode check used a real historical hassfest failure. Follow the [CI extension guide](docs/GITHUB_CI_EXTENSION.md) after completing the automatic four-worker check.
+A separately invoked extension retrieves a pinned public run and attempt-specific jobs, records missing evidence, and saves JSON plus a Markdown brief with an evidence hash. The authoring metadata-mode check used a real historical hassfest failure. Follow the [CI extension guide](docs/GITHUB_CI_EXTENSION.md) to verify the extension independently while the automatic four-worker run awaits evidence.
 
 ## 🟪 Thesis connection
 

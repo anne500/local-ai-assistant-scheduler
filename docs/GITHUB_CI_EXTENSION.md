@@ -11,14 +11,14 @@
 | 📄 JSON evidence and SHA-256 in Markdown report | ✅ Implemented |
 | 🕰️ Historical run date and retrieval time | ✅ Both visible |
 | 🧩 Missing jobs, steps, and diagnostic logs | ✅ Explicit evidence gaps |
-| 🧪 Offline checks | ✅ 22 passing tests including 10 CI checks |
+| 🧪 Offline checks | ✅ All 22 tests passed on Windows in 0.034 seconds, including 10 CI checks |
 | 🔎 Pinned real-run metadata mode | ✅ Completed in authoring environment |
 | 🧠 Windows local-model summary | ⏳ Pending |
 | 🗓️ Expanded four-worker automatic run | ⏳ Pending |
 
 ## 🧭 Execution sequence
 
-Complete the automatic four-worker verification, then exercise this extension on Windows. The extension lives in `extensions/` and is invoked explicitly with `python -m extensions.github_ci`.
+The automatic four-worker check and this extension can be verified independently. Run the Windows extension checks while awaiting the next daily trigger. The extension lives in `extensions/` and is invoked explicitly with `python -m extensions.github_ci`.
 
 ## 📥 Inspect a historical real run
 
