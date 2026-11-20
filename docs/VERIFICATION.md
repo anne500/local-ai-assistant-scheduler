@@ -123,3 +123,15 @@ The supplied Task Scheduler status and matching runner log establish one automat
 - 🧠 Cedar and weather source comparisons were manually reviewed. The code checks empty and truncated responses.
 - 🪟 Windows execution was demonstrated. Other operating systems were not exercised in the supplied record.
 - 🧪 Weather executions were run on the Windows laptop and reviewed from supplied console output. Documentation updates did not rerun the model.
+
+## 📈 Stock and 📰 RSS news implementation checks
+
+The new workers use the tutorial's GOOGL chart endpoint and a public Hugging Face RSS feed. RSS is an adaptation prompted by the hosted search API's credit requirement encountered earlier.
+
+- ✅ Ten standard-library unit tests passed in the authoring environment. They cover quote arithmetic, invalid prices, provider errors, symbol mismatch, RSS ordering/deduplication/source hosts, empty feeds, retained source links, report assembly, and empty/truncated/incomplete model responses.
+- ✅ Live Yahoo chart retrieval parsed successfully into quote evidence.
+- ✅ Live Hugging Face RSS retrieval parsed successfully and selected up to three entries.
+- ✅ Both reports assembled from live retrieval with model responses replaced by test stubs.
+- ⏳ Local Qwen execution through the new workers on Windows awaits verification. No generated stock or news summary has yet been reviewed.
+
+Run all workers from the project root and review the resulting stock and news reports. The news digest uses one publisher's feed excerpts. Python appends publication dates and URLs. Quote changes are computed in Python with Decimal arithmetic against chartPreviousClose. Quote timestamps are retained so the report can be interpreted in context.
