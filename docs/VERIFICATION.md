@@ -253,4 +253,16 @@ The supplied runner log records automatic execution beginning at **14:13:59,034*
 
 The final entry was `2026-11-20 14:14:38,902 INFO Runner completed: workers=4 exit_code=0`.
 
-This verifies all four workers completing through an automatic one-time trigger with windowless Python. Task Scheduler's final result code and removal of the temporary trigger await the follow-up check. Repeated daily reliability remains a broader observation task. The earlier 08:00 console interruption is preserved above; its exact initiating source remains unknown.
+This verifies all four workers completing through an automatic one-time trigger with windowless Python. The follow-up check confirmed Task Scheduler LastRunTime November 20 at 14:13:58 and LastTaskResult `0`. The user replaced the trigger set with a single daily 08:00 trigger; NextRunTime was November 21 at 08:00:00. Repeated daily reliability remains a broader observation task. The earlier 08:00 console interruption is preserved above; its exact initiating source remains unknown.
+
+## ✅ Schedule cleanup confirmed
+
+The supplied Windows transcript confirms the temporary trigger was replaced by the daily 08:00 trigger using `Set-ScheduledTask -Trigger $daily`. Task Scheduler reported:
+
+| Field | Value |
+| --- | --- |
+| 🕰️ LastRunTime | November 20, 2026 at 14:13:58 |
+| 🟢 LastTaskResult | 0 |
+| 🗓️ NextRunTime | November 21, 2026 at 08:00:00 |
+
+The laptop then fast-forwarded to `a734851`. This closes the scheduled four-worker recovery and temporary-trigger cleanup checks. The independently invoked CI extension's metadata and Qwen modes are also verified above. Live news summaries with nonempty excerpts and broader CI diagnosis evaluation remain future verification work.
